@@ -25,7 +25,7 @@ echo ""
 read -p "Enter the name for attendance tracker: " identifier
 
 if [ -z "$identifier" ]; then
-    echo "Error: Identifier cannot be empty"
+    echo "Error: the name for attendance tracker cannot be empty"
     exit 1
 fi
 
