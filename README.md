@@ -61,8 +61,8 @@ Press **Ctrl+C** at any point during the setup process.
 # Result: Creates "attendance_tracker_test_archive.tar.gz"
 ```
 
-## Requirements
+## Thank you
 
-- Bash shell
-- Python 3
-- `tree` command (optional, for directory visualization)
+## link to the vidoe
+
+Watch the complete walkthrough: [Student Attendance Tracker Demo](https://drive.google.com/file/d/1HlTumZ6_rNLwZPKv10uSwD7DZAVOu842/view?usp=sharing)
