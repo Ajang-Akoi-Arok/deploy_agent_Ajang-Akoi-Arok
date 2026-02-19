@@ -78,39 +78,65 @@ echo ""
 
 while true; do
     read -p "Do you want to update the attendance thresholds? (yes/y or no/n): " update_choice
-
-    case "$update_choice" in
+    
+    case $update_choice in
         yes|y|Y|YES)
-        echo ""
+            echo ""
             echo "Proceeding with threshold update..."
             echo ""
-            echo "Note: Thresholds must be integers between 0 and 100. Press Enter to keep current values."
+            echo "Note: Warning threshold must be higher than Failure threshold"
             echo ""
-            read -p "Enter new warning threshold (default: ${current_warning}%): " warn_input
-            if [[ -z "$warn_input" ]]; then
-                warn_threshold=$current_warning
-            elif [[ "$warn_input" =~ ^[0-9]+$ ]] && [ "$warn_input" -ge 0 ] && [ "$warn_input" -le 100 ]; then
-                warn_threshold=$warn_input
-            else
-                warn_threshold=$current_warning
-                echo "Invalid input. Using default: ${warn_threshold}%"
-            fi
+            
+            while true; do
+                read -p "Enter new warning threshold (default: ${current_warning}%, 0-100): " warn_input
+                
+                if [[ -z "$warn_input" ]]; then
+                    warn_threshold=$current_warning
+                    echo "Using default: ${warn_threshold}%"
+                    break
+                elif [[ "$warn_input" =~ ^[0-9]+$ ]] && [ "$warn_input" -ge 0 ] && [ "$warn_input" -le 100 ]; then
+                    warn_threshold=$warn_input
+                    break
+                else
+                    echo "Error: Invalid input. Please enter a number between 0 and 100."
+                    echo ""
+                    echo "Press Enter to use default (${current_warning}%) or enter a valid number."
+                fi
+            done
 
-            read -p "Enter new failure threshold (default: ${current_failure}%): " fail_input
-            if [[ -z "$fail_input" ]]; then
-                fail_threshold=$current_failure
-            elif [[ "$fail_input" =~ ^[0-9]+$ ]] && [ "$fail_input" -ge 0 ] && [ "$fail_input" -le 100 ]; then
-                fail_threshold=$fail_input
-            else
-                fail_threshold=$current_failure
-                echo "Invalid input. Using default: ${fail_threshold}%"
-            fi
+            while true; do
+                read -p "Enter new failure threshold (default: ${current_failure}%, 0-100): " fail_input
+                
+                if [[ -z "$fail_input" ]]; then
+                    fail_threshold=$current_failure
+                    if [ "$fail_threshold" -lt "$warn_threshold" ]; then
+                        echo "Using default: ${fail_threshold}%"
+                        break
+                    else
+                        echo "Error: Default failure threshold ($fail_threshold%) must be less than warning threshold ($warn_threshold%)"
+                        echo "Please enter a value less than $warn_threshold%"
+                        continue
+                    fi
+                elif [[ "$fail_input" =~ ^[0-9]+$ ]] && [ "$fail_input" -ge 0 ] && [ "$fail_input" -le 100 ]; then
+                    if [ "$fail_input" -lt "$warn_threshold" ]; then
+                        fail_threshold=$fail_input
+                        break
+                    else
+                        echo "Error: Failure threshold ($fail_input%) must be less than warning threshold ($warn_threshold%)"
+                        echo "Please enter a value less than $warn_threshold%"
+                    fi
+                else
+                    echo "Error: Invalid input. Please enter a number between 0 and 100."
+                    echo ""
+                    echo "Press Enter to use default (${current_failure}%) or enter a valid number."
+                fi
+            done
 
             sed -i.bak "s/\"warning\": [0-9]*/\"warning\": $warn_threshold/" "$config_file"
             sed -i.bak "s/\"failure\": [0-9]*/\"failure\": $fail_threshold/" "$config_file"
             rm -f "${config_file}.bak"
 
-            echo "Configuration updated"
+            echo "Configuration updated successfully"
             break
             ;;
         no|n|N|NO)
@@ -140,7 +166,20 @@ fi
 echo ""
 echo "Verifying directory structure:"
 echo ""
-tree "$parent_dir"
+
+if command -v tree &> /dev/null; then
+    tree "$parent_dir"
+else
+    echo "Directory contents:"
+    ls -la "$parent_dir"
+    echo ""
+    echo "Helpers directory:"
+    ls -la "$parent_dir/Helpers"
+    echo ""
+    echo "reports directory:"
+    ls -la "$parent_dir/reports"
+fi
+
 if [ -d "$parent_dir" ] && \
    [ -d "$parent_dir/Helpers" ] && \
    [ -d "$parent_dir/reports" ] && \
@@ -148,6 +187,7 @@ if [ -d "$parent_dir" ] && \
    [ -f "$parent_dir/Helpers/assets.csv" ] && \
    [ -f "$parent_dir/Helpers/config.json" ] && \
    [ -f "$parent_dir/reports/reports.log" ]; then
+    echo ""
     echo "All required directories and files are in place"
 else
     echo "Error: Directory structure validation failed"
@@ -162,6 +202,7 @@ echo ""
 echo "Current thresholds:"
 echo "  Warning: $(grep -o '"warning": [0-9]*' "$config_file" | grep -o '[0-9]*')%"
 echo "  Failure: $(grep -o '"failure": [0-9]*' "$config_file" | grep -o '[0-9]*')%"
+echo "  (Warning must be higher than Failure)"
 echo ""
 echo "To run application:"
 echo "  cd $parent_dir"

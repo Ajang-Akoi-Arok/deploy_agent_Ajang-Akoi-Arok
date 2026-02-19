@@ -9,7 +9,7 @@
 
 2. **Navigate to the project directory:**
    ```bash
-   cd Student-Attendance-Tracker
+   cd deploy_agent_Ajang-Akoi-Arok
    ```
 
 3. **Make the script executable:**
@@ -24,7 +24,11 @@
 
 5. **Follow the prompts:**
    - Enter a name for your attendance tracker
-   - Choose whether to update attendance thresholds (warning/failure percentages)
+   - Choose whether to update attendance thresholds (yes/y or no/n)
+   - If updating thresholds:
+     - Enter warning threshold (0-100, default: 75%)
+     - Enter failure threshold (0-100, default: 50%)
+     - Note: Warning threshold must be higher than failure threshold
    - The script will verify directory structure using `tree` command
    - Health check will validate Python 3 installation and file integrity
 
@@ -61,4 +65,4 @@ Press **Ctrl+C** at any point during the setup process.
 
 - Bash shell
 - Python 3
-- `tree` command (for directory visualization)
+- `tree` command (optional, for directory visualization)
