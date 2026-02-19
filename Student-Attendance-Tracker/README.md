@@ -2,21 +2,33 @@
 
 ## How to Run
 
-1. **Make the script executable:**
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Ajang-Akoi-Arok/deploy_agent_Ajang-Akoi-Arok.git
+   ```
+
+2. **Navigate to the project directory:**
+   ```bash
+   cd Student-Attendance-Tracker
+   ```
+
+3. **Make the script executable:**
    ```bash
    chmod +x setup_project.sh
    ```
 
-2. **Run the setup script:**
+4. **Run the setup script:**
    ```bash
    ./setup_project.sh
    ```
 
-3. **Follow the prompts:**
+5. **Follow the prompts:**
    - Enter a name for your attendance tracker
    - Choose whether to update attendance thresholds (warning/failure percentages)
+   - The script will verify directory structure using `tree` command
+   - Health check will validate Python 3 installation and file integrity
 
-4. **Run the application:**
+6. **Run the application:**
    ```bash
    cd attendance_tracker_<your_name>
    python3 attendance_checker.py
