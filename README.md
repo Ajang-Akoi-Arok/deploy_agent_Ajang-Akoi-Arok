@@ -6,10 +6,6 @@
    ```bash
    git clone https://github.com/Ajang-Akoi-Arok/deploy_agent_Ajang-Akoi-Arok.git
    ```
-
-2. **Navigate to the project directory:**
-   ```bash
-   cd Student-Attendance-Tracker
    ```
 
 3. **Make the script executable:**
